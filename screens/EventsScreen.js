@@ -2,12 +2,19 @@ import React from 'react';
 import {  FlatList, ActivityIndicator, Text, ScrollView, StyleSheet, View } from 'react-native';
 //import { ExpoLinksView } from '@expo/samples';
 
+// TEMPORÄR -> nativ implementieren/aufsetzen
+import { MapView } from 'expo';
+
+
 export default class EventsScreen extends React.Component {
   static navigationOptions = { title: 'Events', };
 
   constructor(props) {
     super(props);
-    this.state ={ isLoading: true}
+    this.state ={ 
+      isLoading: true,
+      //userLocation: null
+    }
   }
 
   //hasValidishDateAndTime(item) { return item.datebeg.Valid && item.start.Valid && item.start.String.length >=5; }
@@ -47,6 +54,9 @@ export default class EventsScreen extends React.Component {
   }
 
   componentDidMount(){
+
+
+
     return fetch('http://37.221.194.244:8080/v1/api/schedule/gps/48157083/16382141') //'http://37.221.194.244:8080/v1/api/event/gps/48157083/16382141')
       .then((response) => response.json())
       .then((responseJson) => {
@@ -56,6 +66,8 @@ export default class EventsScreen extends React.Component {
         var iTimeLimit = date.getTime()/1000 + (3600*24*10); // 10 Tage von jetzt
         //var maxDays = 10;
         var events = [];
+
+        
 
         //responseJson.map(function(item, index) {
         responseJson.map((item) => {
@@ -164,11 +176,10 @@ export default class EventsScreen extends React.Component {
     );*/
 
     if(this.state.isLoading){
-      return(
-        <View style={{flex: 1, padding: 20}}>
+      return(<
+        View style={{flex: 1, padding: 20}}>
           <ActivityIndicator/>
-        </View>
-      )
+        </View>)
     }
 
     return(

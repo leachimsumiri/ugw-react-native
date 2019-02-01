@@ -8,18 +8,58 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { WebBrowser } from 'expo';
+import { WebBrowser, MapView } from 'expo';
+import UsersMap from "../components/UsersMap";
 
-import { MonoText } from '../components/StyledText';
+//import { MonoText } from '../components/StyledText';
 
 export default class HomeScreen extends React.Component {
+
   static navigationOptions = {
     header: null,
   };
 
+  constructor(props) {
+    super(props);
+    this.state ={ 
+      //isLoading: true,
+      userLocation: null,
+      eventLocations: null,
+    }
+  }
+
+  requestLocation() {
+    // TODO: Ev nicht direkt hier machen -> eigene Funktion etc
+    navigator.geolocation.getCurrentPosition(position => {
+      this.setState({
+          userLocation: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudeDelta: 0.0622,
+            longitudeDelta: 0.0421,
+          }
+      })
+    });
+  }
+
+  componentDidMount() {
+    this.requestLocation();
+  }
+
+  _handleRegionCange = mapRegion => {
+    this.setState({ mapRegion: mapRegion });
+  }
+
   render() {
     return (
       <View style={styles.container}>
+      <UsersMap 
+        userLocation={this.state.userLocation} 
+        eventLocations={this.state.eventLocations}
+        onRegionChange={this._handleRegionCange}
+      />
+      </View>
+      /*<View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View style={styles.welcomeContainer}>
             <Image
@@ -60,7 +100,7 @@ export default class HomeScreen extends React.Component {
             <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
           </View>
         </View>
-      </View>
+      </View>*/
     );
   }
 
@@ -99,11 +139,19 @@ export default class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  
+  /*map: {
+    width:'100%',
+    height:'100%',
+  },*/
+  
   container: {
+    width: '100%',
+    height:100,
     flex: 1,
     backgroundColor: '#fff',
   },
-  developmentModeText: {
+  /*developmentModeText: {
     marginBottom: 20,
     color: 'rgba(0,0,0,0.4)',
     fontSize: 14,
@@ -184,5 +232,5 @@ const styles = StyleSheet.create({
   helpLinkText: {
     fontSize: 14,
     color: '#2e78b7',
-  },
+  },*/
 });
