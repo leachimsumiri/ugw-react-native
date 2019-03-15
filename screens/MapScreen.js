@@ -1,34 +1,25 @@
 import React from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { WebBrowser, MapView } from 'expo';
+import { StyleSheet, View, Text, } from 'react-native';
+import { WebBrowser } from 'expo';
 import UsersMap from "../components/UsersMap";
 
 //import { MonoText } from '../components/StyledText';
 
-export default class HomeScreen extends React.Component {
+export default class MapScreen extends React.Component {
 
-  static navigationOptions = {
-    header: null,
-  };
+  static navigationOptions = { header: null, };
 
   constructor(props) {
     super(props);
-    this.state ={ 
-      //isLoading: true,
-      userLocation: null,
-      eventLocations: null,
-    }
+    this.state ={ /*isLoading: true,*/ userLocation: null, eventLocations: null, }
   }
 
-  requestLocation() {
+  componentDidMount() {
+    this._requestLocation();
+  }
+
+  // Called on Mount (as of now)
+  _requestLocation() {
     // TODO: Ev nicht direkt hier machen -> eigene Funktion etc
     navigator.geolocation.getCurrentPosition(position => {
       this.setState({
@@ -42,12 +33,9 @@ export default class HomeScreen extends React.Component {
     });
   }
 
-  componentDidMount() {
-    this.requestLocation();
-  }
-
+  // Called when user wipes screen
   _handleRegionCange = mapRegion => {
-    this.setState({ mapRegion: mapRegion });
+    //this.setState({ mapRegion: mapRegion });
   }
 
   render() {
@@ -104,50 +92,45 @@ export default class HomeScreen extends React.Component {
     );
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
+  // _maybeRenderDevelopmentModeWarning() {
+  //   if (__DEV__) {
+  //     const learnMoreButton = (
+  //       <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
+  //         Learn more
+  //       </Text>
+  //     );
 
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
-  }
+  //     return (
+  //       <Text style={styles.developmentModeText}>
+  //         Development mode is enabled, your app will be slower but you can use useful development
+  //         tools. {learnMoreButton}
+  //       </Text>
+  //     );
+  //   } else {
+  //     return (
+  //       <Text style={styles.developmentModeText}>
+  //         You are not in development mode, your app will run at full speed.
+  //       </Text>
+  //     );
+  //   }
+  // }
 
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  };
+  // _handleLearnMorePress = () => {
+  //   WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
+  // };
 
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
-    );
-  };
+  // _handleHelpPress = () => {
+  //   WebBrowser.openBrowserAsync(
+  //     'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
+  //   );
+  // };
 }
 
 const styles = StyleSheet.create({
-  
-  /*map: {
-    width:'100%',
-    height:'100%',
-  },*/
-  
+
   container: {
-    width: '100%',
-    height:100,
+    // width: '100%',
+    // height:100,
     flex: 1,
     backgroundColor: '#fff',
   },
@@ -233,4 +216,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2e78b7',
   },*/
+
 });

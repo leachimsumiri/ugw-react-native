@@ -11,8 +11,8 @@ const UsersMap = props => {
         : props.eventLocations.map(eloc => <MapView.Marker coordinate={eloc} key={eloc.id} />);
 
     return (
-        <View>
-            <MapView style={styles.map}
+        <View style={{flex:1,}}>
+            <MapView style={[styles.map,{flex:1,}]}
                 initialRegion={{
                     latitude: 48.208612,
                     longitude:16.373406,
@@ -31,8 +31,9 @@ const UsersMap = props => {
 const styles = StyleSheet.create({
   
     map: {
-      width:'100%',
-      height:'100%',
+    //    flex: 1,
+    //   width:'100%',
+    //   height:'100%',
     },
 })
 

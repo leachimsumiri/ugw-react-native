@@ -1,10 +1,7 @@
 import React from 'react';
-import {  FlatList, ActivityIndicator, Text, ScrollView, StyleSheet, View } from 'react-native';
+import {  FlatList, ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 //import { ExpoLinksView } from '@expo/samples';
-
-// TEMPORÄR -> nativ implementieren/aufsetzen
-import { MapView } from 'expo';
-
+import EventListItem from '../components/EventListItem';
 
 export default class EventsScreen extends React.Component {
   static navigationOptions = { title: 'Events', };
@@ -37,7 +34,7 @@ export default class EventsScreen extends React.Component {
                 * (-1) + jetzt;                // Abgezogen von jetzt
     const includeStartedBeforeSeconds = item.dauer; //item.end.Valid ? item.end.String * 60 : 120; // 2h default?
 
-    // TODO
+    // TODO 
     // Ggf iTimelimit vorverlegen, falls Event dann schon aus
     if (item.bis.Valid) {
       // iTimelimit = ...
@@ -55,8 +52,7 @@ export default class EventsScreen extends React.Component {
 
   componentDidMount(){
 
-
-
+    // TODO: Echte Koordinaten verwenden
     return fetch('http://37.221.194.244:8080/v1/api/schedule/gps/48157083/16382141') //'http://37.221.194.244:8080/v1/api/event/gps/48157083/16382141')
       .then((response) => response.json())
       .then((responseJson) => {
@@ -122,18 +118,6 @@ export default class EventsScreen extends React.Component {
               //responseJson[index]._time = date.setDate(date.getDate() - todayDaysAfterSunday + item.repeat)
               //item.start
             }
-
-            // // Wochentags
-            // if (item.repeat == 5) {
-
-            //   this.addEvents(events, item, zeit, 24*3600, 5, 7, iTimeLimit);
-            //   //alert(item.end.String);
-            // /*switch (item.repeat) {
-            //   //case 0: if (item.datebeg.Valid) responseJson[index]._startdate = item.datebeg.String.toString(); return Object.assign(item, { _startdate: item.datebeg.String });
-            //   case 1: return;
-            //   case 7: date.setDate(date.getDate() + todayDiffFromSunday)/*.setHours(item.start.String.substring(0,2))* /; responseJson[index]._startdate = date.toString(); return;
-            // }*/ 
-            // }
         });
 
         events.sort( function(a,b) { return a._time < b._time ? -1 : 1; })
@@ -141,7 +125,6 @@ export default class EventsScreen extends React.Component {
         this.setState({
           dataSource: events,
           isLoading: false,
-          
         }, function(){
 
         });
@@ -167,19 +150,12 @@ export default class EventsScreen extends React.Component {
   }); */
 
   render() {
-    /*return (
-      <ScrollView style={styles.container}>
-        {/* Go ahead and delete ExpoLinksView and replace it with your
-           * content, we just wanted to provide you with some helpful links 
-          <ExpoLinksView />* /}
-      </ScrollView>
-    );*/
 
     if(this.state.isLoading){
-      return(<
-        View style={{flex: 1, padding: 20}}>
+      return (
+        <View style={{flex: 1, padding: 20}}>
           <ActivityIndicator/>
-        </View>)
+        </View>);
     }
 
     return(
@@ -187,13 +163,13 @@ export default class EventsScreen extends React.Component {
       <View style={{flex: 1, paddingTop:20}}>
       <FlatList
           data={this.state.dataSource}
-          renderItem={({item}) => <Text>{item.name}, {item._time.toLocaleString()}, {item.props}</Text>}
+          renderItem={({ item }) => <EventListItem event={item} />}
           keyExtractor={({id}, index) => /*id.toString()*/ index.toString()}
       />
       </View>
       </ScrollView>
     );
-  }
+  }// {({item}) => <Text>{item.name}, {item._time.toLocaleString()}, {item.props}</Text>}
 }
 
 const styles = StyleSheet.create({
