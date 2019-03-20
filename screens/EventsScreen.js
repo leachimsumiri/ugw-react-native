@@ -1,7 +1,8 @@
 import React from 'react';
-import {  FlatList, ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
+import { FlatList, ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 //import { ExpoLinksView } from '@expo/samples';
 import EventListItem from '../components/EventListItem';
+import { fetchJson } from "../utils/requests";
 
 export default class EventsScreen extends React.Component {
   static navigationOptions = { title: 'Events', };
@@ -10,7 +11,9 @@ export default class EventsScreen extends React.Component {
     super(props);
     this.state ={ 
       isLoading: true,
-      //userLocation: null
+      dataSource: [],
+      //error: 0, // http response status (im Fehlerfall zB)
+      userCoords: null
     }
   }
 
@@ -51,19 +54,51 @@ export default class EventsScreen extends React.Component {
   }
 
   componentDidMount(){
+    //this.requestEvents(null);
+    
+    navigator.geolocation.getCurrentPosition(position => {
+      // this.setState({
+      //     userLocation: {
+      //       latitude: position.coords.latitude,
+      //       longitude: position.coords.longitude,
+      //       latitudeDelta: 0.0622,
+      //       longitudeDelta: 0.0421,
+      //     }
+      // })
 
+      this.requestEvents(position); 
+    }, err => console.error(err));
+  }
+
+  requestEvents(position) {
     // TODO: Echte Koordinaten verwenden
-    return fetch('http://37.221.194.244:8080/v1/api/schedule/gps/48157083/16382141') //'http://37.221.194.244:8080/v1/api/event/gps/48157083/16382141')
-      .then((response) => response.json())
+    var lat = parseInt(position.coords.latitude  * 1000000).toString();
+    var lon = parseInt(position.coords.longitude * 1000000).toString();
+    var reqStr = `http://37.221.194.244:8080/v1/api/schedule/gps/${lat}/${lon}`;
+    //var reqStr = 'http://37.221.194.244:8080/v1/api/schedule/gps/aa'+lat.toString()+'/'+lon.toString();
+    //var reqStr = 'http://37.221.194.244:8080/v1/api/schedule/gps/48157083/16382141';
+    //console.log(reqStr);
+    //alert(reqStr);
+    //return fetch(reqStr).then((resp) => { resp.text });
+    return fetchJson(reqStr) //'http://37.221.194.244:8080/v1/api/event/gps/48157083/16382141')
+      /*.then((response) => { 
+        if (response.status != 200) {
+          // TODO: Ev ErrorHandling für Production? (User mitteilen dass iwas nicht geht?)
+          //console.warn(response.status+' '+response.statusText);
+          //this.setState({ isLoading: false })
+          //return response.text();
+          throw new Error(response.statusText);
+        }
+        return response.json(); 
+      })*/
+      //.then((responseJson) => {
       .then((responseJson) => {
-
+ 
         //for(a , responseJson) {
         var date = new Date();
         var iTimeLimit = date.getTime()/1000 + (3600*24*10); // 10 Tage von jetzt
         //var maxDays = 10;
         var events = [];
-
-        
 
         //responseJson.map(function(item, index) {
         responseJson.map((item) => {
@@ -118,11 +153,13 @@ export default class EventsScreen extends React.Component {
               //responseJson[index]._time = date.setDate(date.getDate() - todayDaysAfterSunday + item.repeat)
               //item.start
             }
-        });
+        })
+        //.catch((err) => console.warn(err));
 
         events.sort( function(a,b) { return a._time < b._time ? -1 : 1; })
 
         this.setState({
+          userCoords: position.coords,
           dataSource: events,
           isLoading: false,
         }, function(){
@@ -130,8 +167,11 @@ export default class EventsScreen extends React.Component {
         });
 
       })
-      .catch((error) =>{
-        console.error(error);
+      .catch((error) => {
+        //console.warn(error); 
+        console.error(error); // <- etwas zu drastisch ev
+        // TODO: ev mehr ErrorHandling für Production
+        // ----  wassoll passieren wenn Server nicht erreichbar?
       });
   }
 
@@ -151,6 +191,8 @@ export default class EventsScreen extends React.Component {
 
   render() {
 
+
+
     if(this.state.isLoading){
       return (
         <View style={{flex: 1, padding: 20}}>
@@ -163,13 +205,16 @@ export default class EventsScreen extends React.Component {
       <View style={{flex: 1, paddingTop:20}}>
       <FlatList
           data={this.state.dataSource}
-          renderItem={({ item }) => <EventListItem event={item} />}
+          renderItem={({ item }) => {
+            item.userLoc = this.state.userCoords; // <- nicht die eleganteste Lösung!
+            return <EventListItem event={item} />;
+          }}
           keyExtractor={({id}, index) => /*id.toString()*/ index.toString()}
       />
       </View>
       </ScrollView>
     );
-  }// {({item}) => <Text>{item.name}, {item._time.toLocaleString()}, {item.props}</Text>}
+  }
 }
 
 const styles = StyleSheet.create({

@@ -9,7 +9,7 @@ import MapScreen from '../screens/MapScreen';
 
 const HomeStack = createStackNavigator({
   Home: EventsScreen,
-  //Home: MapScreen,
+  //Home: MapScreen, 
 });
 
 HomeStack.navigationOptions = {

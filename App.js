@@ -4,6 +4,7 @@ import { AppLoading, Asset, Font, Icon } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 
 export default class App extends React.Component {
+
   state = {
     isLoadingComplete: false,
   };
@@ -28,6 +29,13 @@ export default class App extends React.Component {
   }
 
   _loadResourcesAsync = async () => {
+
+    // // --- DEV-TOOLS generell deaktivieren ----------------------------------
+    // if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'object') {
+    //   __REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function() {};
+    // }
+    // // ----------------------------------------------------------------------
+
     return Promise.all([
       Asset.loadAsync([
         require('./assets/images/robot-dev.png'),
@@ -53,6 +61,17 @@ export default class App extends React.Component {
     this.setState({ isLoadingComplete: true });
   };
 }
+
+// const disableReactDevTools = () => {
+//   const noop = () => undefined;
+//   const DEV_TOOLS = (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__;
+
+//   if (typeof DEV_TOOLS === 'object') {
+//       for (const [key, value] of Object.entries(DEV_TOOLS)) {
+//           DEV_TOOLS[key] = typeof value === 'function' ? noop : null;
+//       }
+//   }
+// };
 
 const styles = StyleSheet.create({
   container: {

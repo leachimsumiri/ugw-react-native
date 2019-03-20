@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, Text, } from 'react-native';
-import { WebBrowser } from 'expo';
+import { StyleSheet, View, } from 'react-native';
+//import { WebBrowser } from 'expo';
 import UsersMap from "../components/UsersMap";
-
+import BaseScreen from "./BaseScreen";
 //import { MonoText } from '../components/StyledText';
 
-export default class MapScreen extends React.Component {
+export default class MapScreen extends BaseScreen { // React.Component {
 
   static navigationOptions = { header: null, };
 
@@ -15,11 +15,9 @@ export default class MapScreen extends React.Component {
   }
 
   componentDidMount() {
-    this._requestLocation();
-  }
+    //this._requestLocation();
+    //this.requestLocation(this.setState);
 
-  // Called on Mount (as of now)
-  _requestLocation() {
     // TODO: Ev nicht direkt hier machen -> eigene Funktion etc
     navigator.geolocation.getCurrentPosition(position => {
       this.setState({
@@ -30,8 +28,12 @@ export default class MapScreen extends React.Component {
             longitudeDelta: 0.0421,
           }
       })
-    });
+    }); // als zweiter Param, "error-function" möglich!
   }
+
+  // // Called on Mount (as of now)
+  // _requestLocation() {
+  // }
 
   // Called when user wipes screen
   _handleRegionCange = mapRegion => {
