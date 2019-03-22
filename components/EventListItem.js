@@ -1,11 +1,27 @@
 import React from 'react';
 import { StyleSheet, View, Image, Text } from 'react-native';
-//import { MapView } from 'expo'; // "react-native-maps"; ==> https://github.com/react-native-community/react-native-maps/blob/master/docs/installation.md
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Entypo from 'react-native-vector-icons/Entypo';
+// import { MapView } from 'expo'; // "react-native-maps"; ==> https://github.com/react-native-community/react-native-maps/blob/master/docs/installation.md
+// import Ionicons from 'react-native-vector-icons/Ionicons';
+// import FontAwesome from 'react-native-vector-icons/FontAwesome';
+// import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 //import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { format} from 'date-fns'
+//import { de, es, ru} from 'date-fns/locale'
+
+
+//// Mögliche Date Formatierungen
+// ------------------------------
+// https://github.com/date-fns/date-fns
+//
+// import { format, formatDistance, formatRelative, subDays } from 'date-fns'
+// format(new Date(), "'Today is a' iiii")
+// //=> "Today is a Friday"
+// formatDistance(subDays(new Date(), 3), new Date())
+// //=> "3 days ago"
+// formatRelative(subDays(new Date(), 3), new Date())
+// //=> "last Friday at 7:26 p.m."
+
 
 // Mögliche Icons-Übersicht:
 // -------------------------
@@ -38,32 +54,33 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 const EventListItem = ({ event }) => {
 
-    // Distanz 
-    // TODO: Außerhalb errechnen um sortieren/filtern zu können
-    let PI180 = Math.PI/180;
-    let lat = (event.lat / 1000000);
-    let lon = (event.lon / 1000000);
-    let a = 0.5 
-        - Math.cos((event.userLoc.latitude - lat) * PI180)/2
-        + Math.cos(lat * PI180) * Math.cos(event.userLoc.latitude * PI180)
-            * (1 - Math.cos((event.userLoc.longitude - lon) * PI180)) / 2;
-    let km = 12742 * Math.asin(Math.sqrt(a));
-    // Diesen Teil im EventItem lassen (=> Darstellung)
-    let dist = km < 1 
-        ? (parseFloat(km).toFixed(2)*1000 + " m")
-        : (parseFloat(km).toFixed(1) + " km");
+    // // Distanz 
+    // // TODO: Außerhalb errechnen um sortieren/filtern zu können
+    // let PI180 = Math.PI/180;
+    // let lat = (event.lat / 1000000);
+    // let lon = (event.lon / 1000000);
+    // let a = 0.5 
+    //     - Math.cos((event.userLoc.latitude - lat) * PI180)/2
+    //     + Math.cos(lat * PI180) * Math.cos(event.userLoc.latitude * PI180)
+    //         * (1 - Math.cos((event.userLoc.longitude - lon) * PI180)) / 2;
+    // let km = 12742 * Math.asin(Math.sqrt(a));
+    
+    let dist = event.km < 1 
+        ? (parseFloat(event.km).toFixed(2)*1000 + " m")
+        : (parseFloat(event.km).toFixed(1) + " km");
+
+    // INFO: Noch nicht getestet!
+    let time = format(event._time, 
+        event._time.getDate()==new Date().getDate() ? 'H:mm' : 'D.M. H:mm'); //, { locale: de }); //'MMMM Do, YYYY H:mma'
 
     return (
     <View style={styles.container}>
-        {/* <Image
-            style={styles.image}
-            source={require('../assets/images/robot-prod.png')}
-            source={{uri: "http://unsplash.it/50/50"}}
-            resizeMode="contain" />  */}
-
-        <View style={styles.left}>
+        {/* <View style={styles.left}>
+            <Text>{time}</Text>
+        </View> */}
+        <View style={styles.middle}>
             <Text style={styles.title}>{event.name}</Text>
-            <Text style={styles.subti}><MaterialIcons name='schedule' /> {event.zeit}</Text>
+            <Text style={styles.subti}><MaterialIcons name='schedule' /> {time}</Text>
         </View>
 
         <View style={styles.right}>
@@ -91,16 +108,25 @@ const styles = StyleSheet.create({
         //flex: 1,
         flexDirection: 'row',
         //justifyContent: 'flex-end',
-        justifyContent: 'space-between', // (prim-axis) flex-start, center, flex-end, space-around, space-between and space-evenly
-        alignItems: 'center',            // (secn-axis) flex-start, center, flex-end, and stretch
+        justifyContent: 'space-between',  // (prim-axis) flex-start, center, flex-end, space-around, space-between and space-evenly
+        alignItems: 'center',          // (secn-axis) flex-start, center, flex-end, and stretch
 
         // alignItems: "center",
         // justifyContent:"center",
     },
 
-    left : {
-        //alignItems: "baseline",
-    },  
+    // left : {
+    //     //alignItems: "baseline",
+    //     borderRadius:25,
+    //     width: 50,
+    //     height: 50,
+    //     padding: 7,
+    //     backgroundColor: '#ccc',
+    // },  
+
+    middle : {
+
+    },
 
     right : {
         
