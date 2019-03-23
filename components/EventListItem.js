@@ -32,6 +32,30 @@ import { format} from 'date-fns'
 //import Icon from 'react-native-vector-icons/FontAwesome';
 //const myIcon = <Icon name="rocket" size={30} color="#900" />;
 
+
+// Mögliche Collapsible Usages:
+// ----------------------------
+// import Collapsible from 'react-native-collapsible';
+// () => (
+//   <Collapsible collapsed={isCollapsed}>
+//     <SomeCollapsedView />
+//   </Collapsible>
+// );
+// import Accordion from 'react-native-collapsible/Accordion';
+// () => (
+//   <Accordion
+//     activeSections={[0]}
+//     sections={['Section 1', 'Section 2', 'Section 3']}
+//     renderSectionTitle={this._renderSectionTitle}
+//     renderHeader={this._renderHeader}
+//     renderContent={this._renderContent}
+//     onChange={this._updateSections}
+//   />
+// );
+
+
+// Event-Item:
+// -----------
 /*{
     "id":1,
     "name":"Sunday Service",
@@ -51,6 +75,7 @@ import { format} from 'date-fns'
 
     "_time" : [generiert],
 }*/
+
 
 const EventListItem = ({ event }) => {
 
