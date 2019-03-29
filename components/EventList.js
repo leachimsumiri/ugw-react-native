@@ -8,7 +8,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 //import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { format} from 'date-fns'
 //import { de, es, ru} from 'date-fns/locale'
-import Collapsible from 'react-native-collapsible';
+//import Collapsible from 'react-native-collapsible';
+import Accordion from 'react-native-collapsible/Accordion';
 
 
 //// Mögliche Date Formatierungen
@@ -56,33 +57,50 @@ import Collapsible from 'react-native-collapsible';
 //   />
 // );
 
+// _updateSections = activeSections => {
+//     this.setState({ activeSections });
+// };
 
-// Event-Item:
-// -----------
-/*{
-    "id":1,
-    "name":"Sunday Service",
-    "cancel":0,
-    "info":"4 Corners, english speaking ",
-    "props":"W,P,M",
-    "locId":1,
-    "repeat":1,
-    "zeit":"17:00:00",
-    "dauer":150,
-    "von":"2018-01-07",
-    "bis":{"String":"","Valid":false},
-    "loc":"Expedithalle",
-    "strasse":"Absberggasse 27",
-    "lat":48171539,
-    "lon":16390898,
+const EventList = ({ events, onUpdateFunc }) => {
 
-    "_time" : [generiert],
-}*/
+    return (
+        <Accordion
+            activeSections={[]} // {[0]}
+            sections={events}
+            renderSectionTitle={_renderSectionTitle}
+            renderHeader={_renderHeader}
+            renderContent={_renderContent}
+            onChange={onUpdateFunc} //{_updateSections}
+        />
+    );
+    /*
+    Accordion
+    ---------
+    sections	                                        An array of sections passed to the render methods
+    renderHeader(content, index, isActive, sections)	A function that should return a renderable representing the header
+    renderContent(content, index, isActive, sections)	A function that should return a renderable representing the content
+    renderSectionTitle(content, index, isActive)	    A function that should return a renderable representing the title of the section outside the touchable element
+    onChange(indexes)	                                A function that is called when the currently active section(s) are updated.
+    onAnimationEnd(key, index)	                        See Collapsible
+    activeSections	            Control which indices in the sections array are currently open. If empty, closes all sections.
+    underlayColor	            The color of the underlay that will show through when tapping on headers. Defaults to black.
+    touchableComponent	        The touchable component used in the Accordion. Defaults to TouchableHighlight
+    touchableProps	            Properties for the touchableComponent
+    disabled	                Set whether the user can interact with the Accordion
+    align	                    See Collapsible
+    duration	                See Collapsible
+    easing	                    See Collapsible
+    expandFromBottom	        Expand content from the bottom instead of the top
+    expandMultiple	            Allow more than one section to be expanded. Defaults to false.
+    sectionContainerStyle	    Optional styling for the section container.
+    containerStyle	            Optional styling for the Accordion container.
+    */
+}
 
-
-const EventListItem = ({ event }) => {
-
-    // // Distanz 
+function _renderSectionTitle(event) {} //content, index, isActive) { }
+function _renderHeader(event) { //content, index, isActive, sections)
+    
+    // // Distanz (nicht darstellungsrelevant -> außerhalb)
     // // TODO: Außerhalb errechnen um sortieren/filtern zu können
     // let PI180 = Math.PI/180;
     // let lat = (event.lat / 1000000);
@@ -93,10 +111,10 @@ const EventListItem = ({ event }) => {
     //         * (1 - Math.cos((event.userLoc.longitude - lon) * PI180)) / 2;
     // let km = 12742 * Math.asin(Math.sqrt(a));
     
+    // Darstellungsrelevante Berechnungen 
     let dist = event.km < 1 
         ? (parseFloat(event.km).toFixed(2)*1000 + " m")
         : (parseFloat(event.km).toFixed(1) + " km");
-
     // INFO: Noch nicht getestet!
     let time = format(event._time, 
         event._time.getDate()==new Date().getDate() ? 'H:mm' : 'D.M. H:mm'); //, { locale: de }); //'MMMM Do, YYYY H:mma'
@@ -116,7 +134,35 @@ const EventListItem = ({ event }) => {
         </View>
     </View>
     )
-};
+}
+
+/* event {
+    "id":1,
+    "name":"Sunday Service",
+    "cancel":0,
+    "info":"4 Corners, english speaking ",
+    "props":"W,P,M",
+    "locId":1,
+    "repeat":1,
+    "zeit":"17:00:00",
+    "dauer":150,
+    "von":"2018-01-07",
+    "bis":{"String":"","Valid":false},
+    "loc":"Expedithalle",
+    "strasse":"Absberggasse 27",
+    "lat":48171539,
+    "lon":16390898,
+
+    "_time" : [generiert],
+}*/
+
+function _renderContent(event) { //content, index, isActive, sections)
+    return (
+    <View>
+        <Text>{event.info}</Text>
+    </View>
+    )
+}
 
 
 const styles = StyleSheet.create({
@@ -188,35 +234,4 @@ const styles = StyleSheet.create({
     // },
 });
 
-// const EventItem = props => {
-//     // //let userPositionMarker = null;
-//     // let userPositionMarker = props.userLocation==null ? null 
-//     //     : <MapView.Marker coordinate={props.userLocation} />;
-
-//     // const eventLocations = props.eventLocations==null ? null
-//     //     : props.eventLocations.map(eloc => <MapView.Marker coordinate={eloc} key={eloc.id} />);
-
-//     return (
-//         <View style={styles.container}>
-//             <Image
-//              style={{flex:1, height: undefined, width: undefined}}
-//              source={require('../../../assets/images/robot-prod.png')}
-//              resizeMode="contain"
-//            />
-//             {/* <MapView style={styles.map}
-//                 initialRegion={{
-//                     latitude: 48.208612,
-//                     longitude:16.373406,
-//                     latitudeDelta: 0.320,
-//                     longitudeDelta: 0.320,
-//                 }}
-//                 region={props.userLocation}
-//                 onRegionChange={props.onRegionChange}
-//             >
-//                 {userPositionMarker}
-//             </MapView> */}
-//         </View>
-//     )
-// }
-
-export default EventListItem
+export default EventList

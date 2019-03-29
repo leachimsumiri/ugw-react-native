@@ -3,6 +3,7 @@ import { FlatList, ActivityIndicator, ScrollView, StyleSheet, View } from 'react
 //import { ExpoLinksView } from '@expo/samples';
 import EventListItem from '../components/EventListItem';
 import { fetchJson } from "../utils/requests";
+import EventList from '../components/EventList';
 
 export default class EventsScreen extends React.Component {
   static navigationOptions = { title: 'Events', };
@@ -126,6 +127,12 @@ export default class EventsScreen extends React.Component {
       });
   }
 
+  _onUpdateEventList
+  /*_updateSections*/ = activeSections => {
+    this.setState({ activeSections });
+  };
+
+
   render() {
 
     if(this.state.isLoading){
@@ -137,16 +144,20 @@ export default class EventsScreen extends React.Component {
 
     return(
       <ScrollView style={styles.container}>
-      <View style={{flex: 1, paddingTop:20}}>
+      {/* <View style={{flex: 1, paddingTop:20}}>
       <FlatList
           data={this.state.dataSource}
           renderItem={({ item }) => {
             item.userLoc = this.state.userCoords; // <- nicht die eleganteste Lösung!
             return <EventListItem event={item} />;
           }}
-          keyExtractor={({id}, index) => /*id.toString()*/ index.toString()}
+          keyExtractor={({id}, index) => /*id.toString()* / index.toString()}
       />
-      </View>
+      </View> */}
+      <EventList 
+        events={this.state.dataSource}
+        onUpdateFunc={this._onUpdateEventList}
+      />
       </ScrollView>
     );
   }
