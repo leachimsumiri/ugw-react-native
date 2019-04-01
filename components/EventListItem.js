@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, Text } from 'react-native';
+import { StyleSheet, View, Image, Text, Alert, TouchableOpacity } from 'react-native';
 // import { MapView } from 'expo'; // "react-native-maps"; ==> https://github.com/react-native-community/react-native-maps/blob/master/docs/installation.md
 // import Ionicons from 'react-native-vector-icons/Ionicons';
 // import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -57,6 +57,60 @@ import Collapsible from 'react-native-collapsible';
 // );
 
 
+//const EventListItem = ({ event }) => {
+export default class EventListItem extends React.Component {
+
+    state = { isCollapsed: true, }
+
+    render() {
+        // // Distanz 
+        // // TODO: Außerhalb errechnen um sortieren/filtern zu können
+        // let PI180 = Math.PI/180;
+        // let lat = (event.lat / 1000000);
+        // let lon = (event.lon / 1000000);
+        // let a = 0.5 
+        //     - Math.cos((event.userLoc.latitude - lat) * PI180)/2
+        //     + Math.cos(lat * PI180) * Math.cos(event.userLoc.latitude * PI180)
+        //         * (1 - Math.cos((event.userLoc.longitude - lon) * PI180)) / 2;
+        // let km = 12742 * Math.asin(Math.sqrt(a));
+        
+        let event = this.props.event;
+
+        let dist = event.km < 1 
+            ? (parseFloat(event.km).toFixed(2)*1000 + " m")
+            : (parseFloat(event.km).toFixed(1) + " km");
+
+        // INFO: Noch nicht getestet!
+        let time = format(event._time, 
+            event._time.getDate()==new Date().getDate() ? 'H:mm' : 'D.M. H:mm'); //, { locale: de }); //'MMMM Do, YYYY H:mma'
+
+        return (
+        <View style={styles.container}>
+            {/* Header */}
+            <TouchableOpacity style={styles.containerHead} onPress={() => { 
+                    //Alert.alert('New State: '+(this.state.isCollapsed)); 
+                    this.setState({isCollapsed: !this.state.isCollapsed}); 
+                }}>
+                <View style={styles.middle}>
+                    <Text style={styles.title}>{event.name}</Text>
+                    <Text style={styles.subti}><MaterialIcons name='schedule' /> {time}</Text>
+                </View>
+
+                <View style={styles.right}>
+                    <Text style={styles.small}><MaterialIcons name='location-on' /> {dist}</Text>
+                </View>
+            </TouchableOpacity>
+            
+            {/* Expended */}
+            <Collapsible style={styles.containerCollapsable} collapsed={this.state.isCollapsed}>
+                <Text>{event.strasse}</Text>
+                <Text>{event.info}</Text>
+            </Collapsible>
+        </View>
+        )
+    }
+}
+
 // Event-Item:
 // -----------
 /*{
@@ -80,48 +134,9 @@ import Collapsible from 'react-native-collapsible';
 }*/
 
 
-const EventListItem = ({ event }) => {
-
-    // // Distanz 
-    // // TODO: Außerhalb errechnen um sortieren/filtern zu können
-    // let PI180 = Math.PI/180;
-    // let lat = (event.lat / 1000000);
-    // let lon = (event.lon / 1000000);
-    // let a = 0.5 
-    //     - Math.cos((event.userLoc.latitude - lat) * PI180)/2
-    //     + Math.cos(lat * PI180) * Math.cos(event.userLoc.latitude * PI180)
-    //         * (1 - Math.cos((event.userLoc.longitude - lon) * PI180)) / 2;
-    // let km = 12742 * Math.asin(Math.sqrt(a));
-    
-    let dist = event.km < 1 
-        ? (parseFloat(event.km).toFixed(2)*1000 + " m")
-        : (parseFloat(event.km).toFixed(1) + " km");
-
-    // INFO: Noch nicht getestet!
-    let time = format(event._time, 
-        event._time.getDate()==new Date().getDate() ? 'H:mm' : 'D.M. H:mm'); //, { locale: de }); //'MMMM Do, YYYY H:mma'
-
-    return (
-    <View style={styles.container}>
-        {/* <View style={styles.left}>
-            <Text>{time}</Text>
-        </View> */}
-        <View style={styles.middle}>
-            <Text style={styles.title}>{event.name}</Text>
-            <Text style={styles.subti}><MaterialIcons name='schedule' /> {time}</Text>
-        </View>
-
-        <View style={styles.right}>
-            <Text style={styles.small}><MaterialIcons name='location-on' /> {dist}</Text>
-        </View>
-    </View>
-    )
-};
-
-
 const styles = StyleSheet.create({
   
-    container : {
+    container: {
         borderColor:'#fff',
         borderWidth: 1,
         borderRadius: 7,
@@ -132,7 +147,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         
         padding: 7,
+    },
 
+    containerHead : {
         //flex: 1,
         flexDirection: 'row',
         //justifyContent: 'flex-end',
@@ -141,6 +158,10 @@ const styles = StyleSheet.create({
 
         // alignItems: "center",
         // justifyContent:"center",
+    },
+
+    containerCollapsable: {
+        paddingTop: 7,
     },
 
     // left : {
@@ -219,4 +240,4 @@ const styles = StyleSheet.create({
 //     )
 // }
 
-export default EventListItem
+//export default EventListItem

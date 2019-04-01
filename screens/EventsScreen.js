@@ -119,6 +119,7 @@ export default class EventsScreen extends React.Component {
           dataSource: events,
           isLoading: false,
         }, function(){});
+
       })
       .catch((error) => {
         console.error(error); // <- etwas zu drastisch ev
@@ -144,20 +145,20 @@ export default class EventsScreen extends React.Component {
 
     return(
       <ScrollView style={styles.container}>
-      {/* <View style={{flex: 1, paddingTop:20}}>
+      <View style={{flex: 1, paddingTop:20}}>
       <FlatList
           data={this.state.dataSource}
           renderItem={({ item }) => {
             item.userLoc = this.state.userCoords; // <- nicht die eleganteste Lösung!
             return <EventListItem event={item} />;
           }}
-          keyExtractor={({id}, index) => /*id.toString()* / index.toString()}
+          keyExtractor={({id}, index) => /*id.toString()*/ index.toString()}
       />
-      </View> */}
-      <EventList 
+      </View>
+      {/* <EventList 
         events={this.state.dataSource}
         onUpdateFunc={this._onUpdateEventList}
-      />
+      /> */}
       </ScrollView>
     );
   }
