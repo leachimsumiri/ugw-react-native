@@ -12,7 +12,8 @@ export default class EventsScreen extends React.Component {
     super(props);
     this.state ={ 
       isLoading: true,
-      dataSource: [],
+      allEvents: [],
+      filteredEvents: [],
       //error: 0, // http response status (im Fehlerfall zB)
       userCoords: null
     }
@@ -116,7 +117,8 @@ export default class EventsScreen extends React.Component {
 
         this.setState({
           userCoords: position.coords,
-          dataSource: events,
+          allEvents: events,
+          filteredEvents: events,
           isLoading: false,
         }, function(){});
 
@@ -145,9 +147,9 @@ export default class EventsScreen extends React.Component {
 
     return(
       <ScrollView style={styles.container}>
-      <View style={{flex: 1, paddingTop:20}}>
+      <View style={{flex: 1, /*paddingTop:20*/}}>
       <FlatList
-          data={this.state.dataSource}
+          data={this.state.filteredEvents}
           renderItem={({ item }) => {
             item.userLoc = this.state.userCoords; // <- nicht die eleganteste Lösung!
             return <EventListItem event={item} />;

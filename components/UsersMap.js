@@ -11,27 +11,27 @@ const UsersMap = props => {
         : props.eventLocations.map(eloc => <MapView.Marker coordinate={eloc} key={eloc.id} />);
 
     return (
-        <View style={{flex:1,}}>
-            <MapView style={[styles.map,{flex:1,}]}
-                initialRegion={{
-                    latitude: 48.208612,
-                    longitude:16.373406,
-                    latitudeDelta: 0.320,
-                    longitudeDelta: 0.320,
-                }}
-                region={props.userLocation} /* <- wird bei jedem Neuladen gesetzt!! */
-                onRegionChange={props.onRegionChange}
-            >
-                {userPositionMarker}
-            </MapView>
-        </View>
+    <View style={{flex:1,}}>
+        <MapView style={styles.map}
+            initialRegion={{
+                latitude: 48.208612,
+                longitude:16.373406,
+                latitudeDelta: 0.320,
+                longitudeDelta: 0.320,
+            }}
+            region={props.userLocation} /* <- wird bei jedem Neuladen gesetzt!! */
+            onRegionChange={props.onRegionChange}
+        >
+            {userPositionMarker}
+        </MapView>
+    </View>
     )
 }
 
 const styles = StyleSheet.create({
   
     map: {
-    //    flex: 1,
+       flex: 1,
     //   width:'100%',
     //   height:'100%',
     },

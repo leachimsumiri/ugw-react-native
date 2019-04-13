@@ -9,7 +9,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { format} from 'date-fns'
 //import { de, es, ru} from 'date-fns/locale'
 import Collapsible from 'react-native-collapsible';
-
+import UsersMap from "../components/UsersMap";
 
 //// Mögliche Date Formatierungen
 // ------------------------------
@@ -56,6 +56,7 @@ import Collapsible from 'react-native-collapsible';
 //   />
 // );
 
+var deLocale = require('date-fns/locale/de')
 
 //const EventListItem = ({ event }) => {
 export default class EventListItem extends React.Component {
@@ -81,32 +82,48 @@ export default class EventListItem extends React.Component {
             : (parseFloat(event.km).toFixed(1) + " km");
 
         // INFO: Noch nicht getestet!
-        let time = format(event._time, 
-            event._time.getDate()==new Date().getDate() ? 'H:mm' : 'D.M. H:mm'); //, { locale: de }); //'MMMM Do, YYYY H:mma'
+        let time = format(
+            event._time, 
+            event._time.getDate()==new Date().getDate() ? 'HH:mm' : 'dd D.M. HH:mm',
+            {locale: deLocale,}); //, { locale: de }); //'MMMM Do, YYYY H:mma'
+            //{ locale: locales[window.__localeId__] } // or global.__localeId__
+            //var locales = {
+            //  en: require('date-fns/locale/en'),
+            //  eo: require('date-fns/locale/eo'),
+            //  ru: require('date-fns/locale/ru')
+            //}
 
         return (
-        <View style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={() => { 
+            this.setState({isCollapsed: !this.state.isCollapsed}); }}>
+
             {/* Header */}
-            <TouchableOpacity style={styles.containerHead} onPress={() => { 
-                    //Alert.alert('New State: '+(this.state.isCollapsed)); 
-                    this.setState({isCollapsed: !this.state.isCollapsed}); 
-                }}>
+            <View style={styles.containerHeader}>
+
+                <View style={styles.containerHeader}>
+                <View style={styles.left}>
+                    <Text>{/* <Text style={styles.subti}><MaterialIcons name='schedule' />*/}{time}</Text>
+                </View>
                 <View style={styles.middle}>
                     <Text style={styles.title}>{event.name}</Text>
-                    <Text style={styles.subti}><MaterialIcons name='schedule' /> {time}</Text>
+                    <Text>{event.loc}</Text>
+                </View>
                 </View>
 
                 <View style={styles.right}>
                     <Text style={styles.small}><MaterialIcons name='location-on' /> {dist}</Text>
                 </View>
-            </TouchableOpacity>
+            </View>
             
             {/* Expended */}
             <Collapsible style={styles.containerCollapsable} collapsed={this.state.isCollapsed}>
-                <Text>{event.strasse}</Text>
-                <Text>{event.info}</Text>
+                <View style={{flexGrow:1, }}>
+                    <Text>{event.strasse}</Text>
+                    <Text>{event.info}</Text>
+                </View>
+                {/* <UsersMap style={{width:100,}} /> */}
             </Collapsible>
-        </View>
+        </TouchableOpacity> 
         )
     }
 }
@@ -149,11 +166,11 @@ const styles = StyleSheet.create({
         padding: 7,
     },
 
-    containerHead : {
+    containerHeader: {
         //flex: 1,
         flexDirection: 'row',
         //justifyContent: 'flex-end',
-        justifyContent: 'space-between',  // (prim-axis) flex-start, center, flex-end, space-around, space-between and space-evenly
+        justifyContent: 'space-between', //'space-between',  // (prim-axis) flex-start, center, flex-end, space-around, space-between and space-evenly
         alignItems: 'center',          // (secn-axis) flex-start, center, flex-end, and stretch
 
         // alignItems: "center",
@@ -162,16 +179,20 @@ const styles = StyleSheet.create({
 
     containerCollapsable: {
         paddingTop: 7,
+
+        flex: 1,
+        flexDirection:'row',
+        //justifyContent:'flex-end',
     },
 
-    // left : {
-    //     //alignItems: "baseline",
-    //     borderRadius:25,
-    //     width: 50,
-    //     height: 50,
-    //     padding: 7,
-    //     backgroundColor: '#ccc',
-    // },  
+    left : {
+         //alignItems: "baseline",
+         borderRadius:25,
+         width: 50,
+         height: 50,
+         padding: 7,
+         backgroundColor: '#ccc',
+    },  
 
     middle : {
 
@@ -201,12 +222,12 @@ const styles = StyleSheet.create({
 
     small : {
         fontSize: 12,
-    }
+    },
 
-    // map: {
-    //   width:'100%',
-    //   height:'100%',
-    // },
+    map: {
+       width: 40,
+       height:70,
+     },
 });
 
 // const EventItem = props => {

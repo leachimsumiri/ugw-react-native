@@ -8,12 +8,12 @@ import SettingsScreen from '../screens/SettingsScreen';
 import MapScreen from '../screens/MapScreen';
 
 const HomeStack = createStackNavigator({
-  //Home: EventsScreen,
-  Home: MapScreen, 
+  Home: EventsScreen,
+  //Home: MapScreen, 
 });
 
 HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+  tabBarLabel: 'Events',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -26,12 +26,14 @@ HomeStack.navigationOptions = {
   ),
 };
 
+//////////////////////////////////////////////////////////////////
+
 const LinksStack = createStackNavigator({
-  Links: EventsScreen,
+  Links: MapScreen,
 });
 
 LinksStack.navigationOptions = {
-  tabBarLabel: 'Events',
+  tabBarLabel: 'Map',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -39,6 +41,8 @@ LinksStack.navigationOptions = {
     />
   ),
 };
+
+//////////////////////////////////////////////////////////////////
 
 const SettingsStack = createStackNavigator({
   Settings: SettingsScreen,
