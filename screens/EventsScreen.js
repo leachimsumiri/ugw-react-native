@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
+import { FlatList, ActivityIndicator, ScrollView, StyleSheet, View, Button } from 'react-native';
 //import { ExpoLinksView } from '@expo/samples';
 import EventListItem from '../components/EventListItem';
 import { fetchJson } from "../utils/requests";
@@ -97,7 +97,7 @@ export default class EventsScreen extends React.Component {
                   const includeStartedBeforeSeconds = item.dauer; //item.end.Valid ? item.end.String * 60 : 120; // 2h default?
               
                   // TODO: Ggf iTimelimit vorverlegen, falls Event dann schon aus
-                  if (item.bis.Valid) {
+                  if (item.bis != "") { // INFO: 15.04.19 von "Nullable" (bis.Valid check) auf leeren String idF abgeändert!
                     // iTimelimit = ...
                   }
                   
@@ -146,7 +146,13 @@ export default class EventsScreen extends React.Component {
     }
 
     return(
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
+      <View style={styles.navHeader}>
+        <Button title="Zeit" onPress={() => { /*this.setState({isCollapsed:*/}} />
+        <Button title="Ort" color="blue" onPress={() => { /*this.setState({isCollapsed:*/}} />
+      </View>
+
+      <ScrollView style={styles.scrollView}>
       <View style={{flex: 1, /*paddingTop:20*/}}>
       <FlatList
           data={this.state.filteredEvents}
@@ -162,14 +168,27 @@ export default class EventsScreen extends React.Component {
         onUpdateFunc={this._onUpdateEventList}
       /> */}
       </ScrollView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
-    paddingTop: 10,
+    alignItems: 'stretch',
     backgroundColor: '#eee',
+  },
+
+  scrollView: {
+    flex: 1,
+    paddingTop: 10,
+    
+  },
+
+  navHeader: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end'
   },
 });

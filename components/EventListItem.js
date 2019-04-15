@@ -94,20 +94,19 @@ export default class EventListItem extends React.Component {
             //}
 
         return (
-        <TouchableOpacity style={styles.container} onPress={() => { 
-            this.setState({isCollapsed: !this.state.isCollapsed}); }}>
+        <TouchableOpacity style={styles.container} onPress={() => { this.setState({isCollapsed: !this.state.isCollapsed}); }}>
 
             {/* Header */}
             <View style={styles.containerHeader}>
 
                 <View style={styles.containerHeader}>
-                <View style={styles.left}>
-                    <Text>{/* <Text style={styles.subti}><MaterialIcons name='schedule' />*/}{time}</Text>
-                </View>
-                <View style={styles.middle}>
-                    <Text style={styles.title}>{event.name}</Text>
-                    <Text>{event.loc}</Text>
-                </View>
+                    {/* <View style={styles.left}>
+                        <Text>{/*<Text style={styles.subti}><MaterialIcons name='schedule' />* /}{time}</Text>
+                    </View> */}
+                    <View style={styles.middle}>
+                        <Text style={styles.title}>{event.name}</Text>
+                        <Text>{time}{/*({event.loc})*/}</Text>
+                    </View>
                 </View>
 
                 <View style={styles.right}>
@@ -117,8 +116,12 @@ export default class EventListItem extends React.Component {
             
             {/* Expended */}
             <Collapsible style={styles.containerCollapsable} collapsed={this.state.isCollapsed}>
-                <View style={{flexGrow:1, }}>
-                    <Text>{event.strasse}</Text>
+                {/* <View style={{flexGrow:1, }}> */}
+                <View>
+                    <Text>{event.loc}</Text>
+                    <Text>{event.strasse}, {event.plz} {event.ort}</Text>
+                </View>
+                <View>
                     <Text>{event.info}</Text>
                 </View>
                 {/* <UsersMap style={{width:100,}} /> */}
@@ -141,9 +144,17 @@ export default class EventListItem extends React.Component {
     "zeit":"17:00:00",
     "dauer":150,
     "von":"2018-01-07",
-    "bis":{"String":"","Valid":false},
+    //"bis":{"String":"","Valid":false}, // 15.4.19 geändert ->
+    "bis":"",
+
     "loc":"Expedithalle",
     "strasse":"Absberggasse 27",
+
+    // seit 15.4.19 auch
+    "plz":"1100",
+    "ort":"Wien",
+    // --
+
     "lat":48171539,
     "lon":16390898,
 
@@ -181,7 +192,7 @@ const styles = StyleSheet.create({
         paddingTop: 7,
 
         flex: 1,
-        flexDirection:'row',
+        //flexDirection:'row',
         //justifyContent:'flex-end',
     },
 
