@@ -61,7 +61,7 @@ var deLocale = require('date-fns/locale/de')
 //const EventListItem = ({ event }) => {
 export default class EventListItem extends React.Component {
 
-    state = { isCollapsed: true, }
+    state = { isCollapsed: true, lastId: 0, }
 
     render() {
         // // Distanz 
@@ -76,6 +76,12 @@ export default class EventListItem extends React.Component {
         // let km = 12742 * Math.asin(Math.sqrt(a));
         
         let event = this.props.event;
+
+        // Falls andere ID ("reused" View) -- UND nicht zufällig ein ander(szeitig)es Event mit gleicher id
+        if (this.state.lastId != event.id) {
+            this.state.lastId = event.id;
+            this.state.isCollapsed = true; // -> einklappen!
+        }
 
         let dist = event.km < 1 
             ? (parseFloat(event.km).toFixed(2)*1000 + " m")
@@ -167,12 +173,12 @@ const styles = StyleSheet.create({
     container: {
         borderColor:'#fff',
         borderWidth: 1,
-        borderRadius: 7,
+        borderRadius: 10, //7
         backgroundColor: '#fafafa',
 
-        margin: 12,
-        marginTop:0,
-        marginBottom: 10,
+        marginLeft: 10,
+        marginRight:10,
+        marginBottom:7, // 10
         
         padding: 7,
     },
