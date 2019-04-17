@@ -8,51 +8,69 @@ import SettingsScreen from '../screens/SettingsScreen';
 import MapScreen from '../screens/MapScreen';
 
 const HomeStack = createStackNavigator({
-  //Home: EventsScreen,
-  Home: MapScreen, 
+  Home: EventsScreen,
+  //Home: MapScreen, 
 });
 
 HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+  tabBarLabel: 'Events',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
+          ? 'ios-list-box'
+          : 'md-list-box'
+          //? `ios-information-circle${focused ? '' : '-outline'}`
+          //: 'md-information-circle'
       }
     />
   ),
 };
 
+//////////////////////////////////////////////////////////////////
+
 const LinksStack = createStackNavigator({
-  Links: EventsScreen,
+  Links: MapScreen,
 });
 
 LinksStack.navigationOptions = {
-  tabBarLabel: 'Events',
+  tabBarLabel: 'Karte',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
+      //name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
+      name={Platform.OS === 'ios' ? 'ios-locate' : 'md-locate'}
     />
   ),
 };
+
+//////////////////////////////////////////////////////////////////
 
 const SettingsStack = createStackNavigator({
   Settings: SettingsScreen,
 });
 
 SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+  tabBarLabel: 'Vorschlagen',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
+      name={Platform.OS === 'ios' ? 'ios-create' : 'md-create'}
     />
   ),
 };
+
+
+// SettingsStack.navigationOptions = {
+//   tabBarLabel: 'Settings',
+//   tabBarIcon: ({ focused }) => (
+//     <TabBarIcon
+//       focused={focused}
+//       name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
+//     />
+//   ),
+// };
 
 export default createBottomTabNavigator({
   HomeStack,
