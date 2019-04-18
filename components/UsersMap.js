@@ -23,6 +23,7 @@ const UsersMap = props => {
             onRegionChange={props.onRegionChange}
         >
             {userPositionMarker}
+            {eventLocations}
         </MapView>
     </View>
     )
