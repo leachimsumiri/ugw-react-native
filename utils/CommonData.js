@@ -1,5 +1,5 @@
 //import React from 'react';
-import { fetchJson } from "./requests";
+import { fetchJsonOrThrow } from "./requests";
 
 export default class CommonData { //extends React.Component {
 
@@ -59,7 +59,7 @@ export default class CommonData { //extends React.Component {
           var reqStr = `http://37.221.194.244:8080/v1/api/schedule/gps/${lat}/${lon}`;
           //var reqStr = 'http://37.221.194.244:8080/v1/api/schedule/gps/aa'+lat.toString()+'/'+lon.toString();
           //var reqStr = 'http://37.221.194.244:8080/v1/api/schedule/gps/48157083/16382141';
-          return fetchJson(reqStr) //'http://37.221.194.244:8080/v1/api/event/gps/48157083/16382141')
+          return fetchJsonOrThrow(reqStr) //'http://37.221.194.244:8080/v1/api/event/gps/48157083/16382141')
             .then((responseJson) => {
        
               var date = new Date();
@@ -134,9 +134,12 @@ export default class CommonData { //extends React.Component {
               return events;
             })
             .catch((error) => {
-              console.error(error); // <- etwas zu drastisch ev
+              //console.error(error); // <- etwas zu drastisch ev
               // TODO: ev mehr ErrorHandling für Production
               // -> was soll passieren wenn Server nicht erreichbar?
+
+              console.warn("Events abrufen: "+error);
+              return []; // Leere Liste und Fehler als Warn?
             });
 
         //}, err => console.error(err));
