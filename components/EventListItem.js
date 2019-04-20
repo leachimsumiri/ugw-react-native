@@ -111,12 +111,12 @@ export default class EventListItem extends React.Component {
                     </View> */}
                     <View style={styles.middle}>
                         <Text style={styles.title}>{event.name}</Text>
-                        <Text>{time}{/*({event.loc})*/}</Text>
+                        <Text>{time}, {event.loc}</Text>
                     </View>
                 </View>
 
                 <View style={styles.right}>
-                    <Text style={styles.small}><MaterialIcons name='location-on' /> {dist}</Text>
+                    <Text style={styles.small}>{dist} <MaterialIcons name='location-on' /></Text>
                 </View>
             </View>
             
@@ -124,7 +124,7 @@ export default class EventListItem extends React.Component {
             <Collapsible style={styles.containerCollapsable} collapsed={this.state.isCollapsed}>
                 {/* <View style={{flexGrow:1, }}> */}
                 <View>
-                    <Text>{event.loc}</Text>
+                    {/* <Text>{event.loc}</Text> */}
                     <Text>{event.strasse}, {event.plz} {event.ort}</Text>
                 </View>
                 <View>

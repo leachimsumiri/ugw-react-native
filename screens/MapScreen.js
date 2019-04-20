@@ -4,7 +4,7 @@ import { StyleSheet, View, } from 'react-native';
 import UsersMap from "../components/UsersMap";
 import BaseScreen from "./BaseScreen";
 //import { MonoText } from '../components/StyledText';
-import CommonData from '../CommonData';
+import CommonData from '../utils/CommonData';
 
 export default class MapScreen extends BaseScreen { // React.Component {
 
@@ -15,29 +15,32 @@ export default class MapScreen extends BaseScreen { // React.Component {
     this.state ={ /*isLoading: true,*/ userLocation: null, eventLocations: null, }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     //this._requestLocation();
     //this.requestLocation(this.setState);
 
-    CommonData.getInst().requestEvents( (position, events) => {
+    //CommonData.getInst().requestEvents( (position, events) => {
     //navigator.geolocation.getCurrentPosition(position => {
+    position = await CommonData.getInst().requestPosition();
+    events = await CommonData.getInst().requestEvents(); 
 
-      var eventLocations = [];
-      events.map(event => {
-        var el = { longitude: event.lon/1000000.0, latitude: event.lat/1000000.0 };
-        eventLocations.push(el);
-      });
+    var eventLocations = [];
+    events.map((event, index) => {
+      var el = { longitude: event.lon/1000000.0, latitude: event.lat/1000000.0, key: index };
+      eventLocations.push(el);
+    });
 
-      this.setState({
-          userLocation: {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            latitudeDelta: 0.0622,
-            longitudeDelta: 0.0421,
-          },
-          eventLocations : eventLocations
-      })
-    }); // als zweiter Param, "error-function" möglich!
+    this.setState({
+        userLocation: {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta: 0.0622,
+          longitudeDelta: 0.0421,
+        },
+        eventLocations : eventLocations
+    });
+
+    //}); // als zweiter Param, "error-function" möglich!
   }
 
   // // Called on Mount (as of now)

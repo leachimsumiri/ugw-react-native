@@ -1,7 +1,7 @@
 
 // Ruft URL ab, gibt bei Erfolg JSON-Daten und
 // wirft im Fehlerfall Statuscode + Statustext
-export function fetchJson(url) {
+export async function fetchJson(url) {
     return fetch(url)
         //.then(checkStatus)
         .then((response) => Promise.all([

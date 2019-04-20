@@ -1,9 +1,12 @@
-import React from 'react';
-import { fetchJson } from "./utils/requests";
+//import React from 'react';
+import { fetchJson } from "./requests";
 
 export default class CommonData { //extends React.Component {
 
     static myInst = null;
+
+    lastPosition = null;
+    lastEvents = null;
 
     static getInst() {
         if (CommonData.myInst == null) {
@@ -13,9 +16,32 @@ export default class CommonData { //extends React.Component {
     }
     //constructor(props) { super(props); }
 
-    requestEvents(callbackFunktion) {
+    requestPosition() {
 
-        navigator.geolocation.getCurrentPosition(position => {
+      var options = {
+        enableHighAccuracy: true,
+        timeout:   60000, // Zeit nach der ein Error Callback ausgelöst wird (0 = nie auslösen??)
+        maximumAge: 2000, // Maximales gecachtes Positionsalter (in ms)
+      };
+
+      return new Promise(function(resolve, reject) {
+        navigator.geolocation.getCurrentPosition(
+          pos => { resolve(pos); this.lastPosition = pos; }, 
+          err => { reject(err); console.warn("Position abrufen: "+err); },
+          options);
+      });
+
+      //return await Promise.resolve
+    }
+
+
+    // TODO: HIER weiterbaseteln ...
+    //async requestEvents(callbackFunktion) {
+    async requestEvents(/*position*/) {
+
+        position = (lastPosition == null) ? await requestPosition() : lastPosition;
+          
+        //return /*async*/ navigator.geolocation.getCurrentPosition(position => {
             // this.setState({
             //     userLocation: {
             //       latitude: position.coords.latitude,
@@ -26,11 +52,8 @@ export default class CommonData { //extends React.Component {
             // })
       
             //this.requestEvents(position); 
-          
         
-      
-        //requestEvents(position) {
-      
+        //return new Promise(function(resolve, reject) {
           var lat = parseInt(position.coords.latitude  * 1000000);
           var lon = parseInt(position.coords.longitude * 1000000);
           var reqStr = `http://37.221.194.244:8080/v1/api/schedule/gps/${lat}/${lon}`;
@@ -106,9 +129,9 @@ export default class CommonData { //extends React.Component {
                   }
               })
               //.catch((err) => console.warn(err));
-      
-              callbackFunktion(position, events);
-      
+              //callbackFunktion(position, events);
+              this.lastEvents = events;
+              return events;
             })
             .catch((error) => {
               console.error(error); // <- etwas zu drastisch ev
@@ -116,6 +139,6 @@ export default class CommonData { //extends React.Component {
               // -> was soll passieren wenn Server nicht erreichbar?
             });
 
-        }, err => console.error(err));
+        //}, err => console.error(err));
     }
 }

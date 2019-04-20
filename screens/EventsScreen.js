@@ -1,9 +1,9 @@
 import React from 'react';
-import { FlatList, ActivityIndicator, ScrollView, StyleSheet, View, Button, Text } from 'react-native';
+import { FlatList, ActivityIndicator, ScrollView, RefreshControl, StyleSheet, View, Button } from 'react-native';
 //import { ExpoLinksView } from '@expo/samples';
 import EventListItem from '../components/EventListItem';
-import { fetchJson } from "../utils/requests";
-import CommonData from '../CommonData';
+//import { fetchJson } from "../utils/requests";
+import CommonData from '../utils/CommonData';
 //import EventList from '../components/EventList';
 
 const filterEnum = {'ZEIT':1, 'ORT':2}; //Object.freeze({'zeit':1, 'ort':2});
@@ -25,32 +25,46 @@ export default class EventsScreen extends React.Component {
     }
   }
 
-  componentDidMount(){
+  async componentDidMount(){
     
-    CommonData.getInst().requestEvents( (position, events) => {
-      
-      // Von "Haus aus", nach Zeit gefiltert
-      events.sort( function(a,b) { return a._time < b._time ? -1 : 1; })
+    position = await CommonData.getInst().requestPosition();
+    events = await CommonData.getInst().requestEvents(/*position*/);
 
-      this.setState({
-        userCoords: position.coords,
-        allEvents: events,
-        //filteredEvents: events,
-        isLoading: false,
-      }, function(){}); // TODO: Console log
+    // Von "Haus aus", nach Zeit gefiltert (und sekundär nach Ort, daher davor)
+    events.sort(function(a,b) { return a.km    < b.km    ? -1 : 1; });
+    events.sort(function(a,b) { return a._time < b._time ? -1 : 1; });
 
-    });
+    this.setState({
+      userCoords: position.coords,
+      allEvents: events,
+      //filteredEvents: events,
+      isLoading: false,
+    }, function(){}); // TODO: Console log
+    
   }
 
-  _onUpdateEventList
-  /*_updateSections*/ = activeSections => {
-    this.setState({ activeSections });
-  };
+  // Event-Handler
+  //async _onRefreshSwipe() {
+  _onRefreshSwipe = () => {
+    this.setState({isLoading: true});
+
+    // Etwas hässlich, aber funktioniert zuverlässig; TODO: Überarbeiten!
+    outerThis = this;
+    (async function reloadEventsAutorunner() {
+      events = await CommonData.getInst().requestEvents().catch((err) => console.warn("caught: "+err));
+      outerThis.setState({isLoading: false, allEvents: events});
+    })();
+  }
+
+  // _onUpdateEventList
+  // /*_updateSections*/ = activeSections => {
+  //   this.setState({ activeSections });
+  // }; 
 
 
   render() {
 
-    if(this.state.isLoading){
+    if (this.state.isLoading){
       return (
         <View style={{flex: 1, padding: 20}}>
           <ActivityIndicator/>
@@ -66,7 +80,7 @@ export default class EventsScreen extends React.Component {
 
     return(
       <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={styles.scrollView} refreshControl={<RefreshControl refreshing={this.state.isLoading} onRefresh={this._onRefreshSwipe} />}>
       <View style={{flex: 1, /*paddingTop:20*/}}>
         
         <View style={styles.navHeader}>

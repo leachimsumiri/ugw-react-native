@@ -8,7 +8,7 @@ const UsersMap = props => {
         : <MapView.Marker coordinate={props.userLocation} />;
 
     const eventLocations = props.eventLocations==null ? null
-        : props.eventLocations.map(eloc => <MapView.Marker coordinate={eloc} key={eloc.id} />);
+        : props.eventLocations.map(eloc => <MapView.Marker coordinate={eloc} key={eloc.key} />);
 
     return (
     <View style={{flex:1,}}>
