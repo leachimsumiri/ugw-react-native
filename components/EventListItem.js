@@ -87,7 +87,6 @@ export default class EventListItem extends React.Component {
             ? (parseFloat(event.km).toFixed(2)*1000 + " m")
             : (parseFloat(event.km).toFixed(1) + " km");
 
-        // INFO: Noch nicht getestet!
         let time = format(
             event._time, 
             event._time.getDate()==new Date().getDate() ? 'HH:mm' : 'dd D.M. HH:mm',
@@ -97,7 +96,11 @@ export default class EventListItem extends React.Component {
             //  en: require('date-fns/locale/en'),
             //  eo: require('date-fns/locale/eo'),
             //  ru: require('date-fns/locale/ru')
-            //}
+            //} 
+
+        // let time = 
+        //     event._time.getDate()==new Date().getDate() ? // Selber Tag (oder ev 1h bei Verschiebung/Umstellung -> testen?)
+        //     event._time.
 
         return (
         <TouchableOpacity style={styles.container} onPress={() => { this.setState({isCollapsed: !this.state.isCollapsed}); }}>
