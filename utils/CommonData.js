@@ -46,9 +46,8 @@ export default class CommonData { //extends React.Component {
             .then((responseJson) => {
        
               var date = new Date();
-              var timeLimit = date.getTime()/1000 + (3600*24*10); // 10 Tage von jetzt
-              var lastTime = new Date().setDate(date.getDate() + 10); // 10 Tage von jetzt
-              var interv = 7; // 7 Tage (für REPEAT-Funktion)
+              //var timeLimit = date.getTime()/1000 + (3600*24*10); // 10 Tage von jetzt
+              var lastTime = new Date().setDate(date.getDate() + 14); // 14 Tage von jetzt
 
               var events = [];
               
@@ -65,8 +64,6 @@ export default class CommonData { //extends React.Component {
                   let nowMinusEventLength = new Date(); nowMinusEventLength.setMinutes(nowMinusEventLength.getMinutes() - dauer);
                   let z = new Date(eventZeit);
 
-                  //alert("Name:"+item.name+", Zeit:"+eventZeit);
-                  //alert("Name:"+item.name+", Stunde:"+item.zeit.substring(0,2));
                   // TODO: Ev auch checken ob datebeg malformed / gültiges Datum ist --- (aber REST Server sollte schon "leer" oder "gültig" ausspucken, keine Mischung)
       
                   // Distanz 
@@ -84,17 +81,19 @@ export default class CommonData { //extends React.Component {
                     events.push(ev);
                   }
       
-                  // Wöchentlich
+                  // (Mehrmals) Wöchentlich
                   else if (item.repeat <= 7) {
                     //var first = zeit.getTime()/1000;  // Unix Sekunden des Events
                     //var jetzt = date.getTime()/1000 - item.ende/*umbenennen zu "dauer"*/; // Unix Sekudnen jetzt gerade - Dauer vom Event
                     //const zeitspanne = 7*24*3600;
-      
+                    //if (item.name=="Anbetungsgottesdienst") 
+                    //alert ("Repeat: "+item.name);
                     // TODO: Wenn Beginn vom Event in der Zukunft liegt ... ansonsten 
                     //var zeitspanne_seit_letztem_event = ((jetzt - first)%(7*24*3600));
                     
                     // Schleife von nächstem Event bis Maximalzeit
-                    for (var i=0; i < item.repeat; i++) {
+                    var interv = 7; // 7 Tage (für REPEAT-Funktion)
+                    for (var tagoffset=0; tagoffset < item.repeat; tagoffset++) {
       
                         //var erstTime = (eventZeit.getTime()/1000)+(i * 24*3600);
                         //var interval = 7*24*3600;
@@ -109,7 +108,8 @@ export default class CommonData { //extends React.Component {
                         //   // iTimelimit = ...
                         // }
 
-                        
+                        //if (i > 1) {console.warn(item.name);}
+
                         
                         // var erstes = erstTime > jetzt ? erstTime :    // falls erstes Event in Zukunft, ist das das erste ;-)
                         //        (jetzt - zeit <= includeStartedBeforeSeconds) ? zeit : (zeit + interval); // Liegt letztes in Toleranz, sonst nächstes
@@ -121,9 +121,10 @@ export default class CommonData { //extends React.Component {
                         
                         // Eventdauer für Abschätzung hinzunehmen
                         //let firstEventEndTime = new Date(eventZeit); firstEventEndTime.setMinutes(firstEventEndTime.getMinutes() + dauer);
-
-                        for (z.setDate(z.getDate() + i); z < lastTime; z.setDate(z.getDate() + interv)) {
-                          if (z < nowMinusEventLength) continue;
+                        z = new Date(eventZeit);
+                        for (z.setDate(z.getDate() + tagoffset); z < lastTime; z.setDate(z.getDate() + interv)) { 
+                          //if (i > 1) {console.warn(item.name);}
+                          if (z < nowMinusEventLength) continue; // schon vorbei?
                           events.push(Object.assign({ _time: new Date(z)/*.toLocaleString()*/, km, }, item));
                         }
                     }
