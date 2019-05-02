@@ -31,12 +31,13 @@ export default class EventsScreen extends React.Component {
     events = await CommonData.getInst().requestEvents(/*position*/);
 
     // Von "Haus aus", nach Zeit gefiltert (und sekundär nach Ort, daher davor)
-    events.sort(function(a,b) { return a.km    < b.km    ? -1 : 1; });
+    //events.sort(function(a,b) { return a.km    < b.km    ? -1 : 1; });
     events.sort(function(a,b) { return a._time < b._time ? -1 : 1; });
-
+          //.sort(function(a,b) { return a._time < b._time ? -1 : 1; });
     this.setState({
       userCoords: position.coords,
       allEvents: events,
+      filter: filterEnum.ZEIT,
       //filteredEvents: events,
       isLoading: false,
     }, function(){}); // TODO: Console log
