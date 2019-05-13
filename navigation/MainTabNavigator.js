@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import EventsScreen from '../screens/EventsScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import RecommendScreen from '../screens/RecommendScreen';
 import MapScreen from '../screens/MapScreen';
 
 const HomeStack = createStackNavigator({
@@ -47,11 +47,11 @@ LinksStack.navigationOptions = {
 
 //////////////////////////////////////////////////////////////////
 
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
+const RecommendStack = createStackNavigator({
+  Recommendations: RecommendScreen,
 });
 
-SettingsStack.navigationOptions = {
+RecommendStack.navigationOptions = {
   tabBarLabel: 'Vorschlagen',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
@@ -75,5 +75,5 @@ SettingsStack.navigationOptions = {
 export default createBottomTabNavigator({
   HomeStack,
   LinksStack,
-  SettingsStack,
+  RecommendStack,
 });
