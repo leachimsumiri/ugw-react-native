@@ -5,6 +5,7 @@ import EventListItem from '../components/EventListItem';
 //import { fetchJson } from "../utils/requests";
 import CommonData from '../utils/CommonData';
 //import EventList from '../components/EventList';
+import R from 'res/R';
 
 const filterEnum = {'ZEIT':1, 'ORT':2}; //Object.freeze({'zeit':1, 'ort':2});
 
@@ -53,7 +54,7 @@ export default class EventsScreen extends React.Component {
     outerThis = this;
     (async function reloadEventsAutorunner() {
       events = await CommonData.getInst().requestEvents().catch((err) => console.warn("caught: "+err));
-      outerThis.setState({isLoading: false, allEvents: events});
+      outerThis.setState({isLoading: false, allEvents: events, filter: outerThis.state.filter});
     })();
   }
 
@@ -79,6 +80,11 @@ export default class EventsScreen extends React.Component {
       case filterEnum.ORT : this.state.allEvents.sort( function(a,b) { return a.km    < b.km    ? -1 : 1; }); break;
     }*/
 
+    switch (this.state.filter) {
+      case filterEnum.ZEIT: this.state.allEvents.sort( function(a,b) { return a._time < b._time ? -1 : 1; }); break;
+      case filterEnum.ORT:  this.state.allEvents.sort( function(a,b) { return a.km < b.km ? -1 : 1; }); break;
+    }
+
     return(
       <View style={styles.container}>
       <ScrollView style={styles.scrollView} refreshControl={<RefreshControl refreshing={this.state.isLoading} onRefresh={this._onRefreshSwipe} />}>
@@ -86,16 +92,8 @@ export default class EventsScreen extends React.Component {
         
         <View style={styles.navHeader}>
           {/* <Text style={styles.filterItem}>Filter</Text> */}
-          <Button title="Zeit" color={this.state.filter==filterEnum.ZEIT?"lightblue":"lightgray"}
-            onPress={() => { 
-              this.state.allEvents.sort( function(a,b) { return a._time < b._time ? -1 : 1; });
-              this.setState({filter:filterEnum.ZEIT, allEvents:this.state.allEvents }); 
-            }} />
-          <Button title="Ort"  color={this.state.filter==filterEnum.ORT ?"lightblue":"lightgray"}
-            onPress={() => { 
-              this.state.allEvents.sort( function(a,b) { return a.km < b.km ? -1 : 1; });
-              this.setState({filter:filterEnum.ORT,  allEvents:this.state.allEvents }); 
-            }} />
+          <Button title="Zeit" color={this.state.filter==filterEnum.ZEIT?R.color.activeblue :"lightgray"} onPress={() => { this.setState({filter:filterEnum.ZEIT}); }} />
+          <Button title="Ort"  color={this.state.filter==filterEnum.ORT ?R.color.activeblue :"lightgray"} onPress={() => { this.setState({filter:filterEnum.ORT}); }} />
         </View>
 
         <FlatList
@@ -112,7 +110,7 @@ export default class EventsScreen extends React.Component {
       {/* <EventList 
         events={this.state.dataSource}
         onUpdateFunc={this._onUpdateEventList}
-      /> */}
+      /> */} 
       </ScrollView>
       </View>
     );

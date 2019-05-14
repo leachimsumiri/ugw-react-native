@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, Text, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Image, Text, Alert, TouchableOpacity, ImageBackground } from 'react-native';
 // import { MapView } from 'expo'; // "react-native-maps"; ==> https://github.com/react-native-community/react-native-maps/blob/master/docs/installation.md
 // import Ionicons from 'react-native-vector-icons/Ionicons';
 // import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -10,6 +10,9 @@ import { format} from 'date-fns'
 //import { de, es, ru} from 'date-fns/locale'
 import Collapsible from 'react-native-collapsible';
 import UsersMap from "../components/UsersMap";
+import R from 'res/R';
+
+//import Images from '../assets/images'
 
 //// Mögliche Date Formatierungen
 // ------------------------------
@@ -98,13 +101,28 @@ export default class EventListItem extends React.Component {
             //  ru: require('date-fns/locale/ru')
             //} 
 
+        let props =  event.props.split(",");
+        let bgcolor = //props.includes('W') ? '#e2e2ff' : //ccccff (beides) ehübsches lila
+                      props.includes('W') ? R.color.events.worship : //ccccff hübsches lila
+                      //props.includes('P') ? '#ddeedd' :
+                      //props.includes('P') ? '#ffcccc' :
+                      props.includes('P') ? R.color.events.outreach :
+                      //props.includes('W') ? '#aaaaff' :
+                      event.km < 3 ? R.color.events.onetime :
+
+                      //event.repeat == 0 ? '#ffcccc' : // #ffaaaa recht gutes rot
+                      //'#fcfcfc';
+                      R.color.events.regular;
+
+        //let img = event.orgId in R.images.orgs ? R.images.orgs[event.orgId] : undefined;
+        
         // let time = 
         //     event._time.getDate()==new Date().getDate() ? // Selber Tag (oder ev 1h bei Verschiebung/Umstellung -> testen?)
         //     event._time.
 
         return (
-        <TouchableOpacity style={styles.container} onPress={() => { this.setState({isCollapsed: !this.state.isCollapsed}); }}>
-
+        <TouchableOpacity style={[styles.container, {backgroundColor:bgcolor}]} onPress={() => { this.setState({isCollapsed: !this.state.isCollapsed}); }}>
+        <ImageBackground source={R.images.orgs[event.orgId]} style={styles.containerBg} imageStyle={{opacity:0.10}}>
             {/* Header */}
             <View style={styles.containerHeader}>
 
@@ -135,6 +153,7 @@ export default class EventListItem extends React.Component {
                 </View>
                 {/* <UsersMap style={{width:100,}} /> */}
             </Collapsible>
+        </ImageBackground>
         </TouchableOpacity> 
         )
     }
@@ -172,18 +191,29 @@ export default class EventListItem extends React.Component {
 
 
 const styles = StyleSheet.create({
-  
+
     container: {
-        borderColor:'#fff',
+        borderColor:     'transparent',//'#fafafa',
+        //backgroundColor: '#ffaaaa',//'#fafafa',
         borderWidth: 1,
         borderRadius: 10, //7
-        backgroundColor: '#fafafa',
-
+        
         marginLeft: 10,
         marginRight:10,
         marginBottom:7, // 10
         
+    },
+  
+    containerBg: {
+        flex: 1,
         padding: 7,
+        borderColor: '#aaa', //'transparent',
+        borderWidth: 1,
+        borderRadius:10,
+
+        //resizeMode: 'stretch', cover, contain, stretch, repeat, center
+        //blurRadius: 2,
+        //resizeMode: 'center',
     },
 
     containerHeader: {
@@ -195,6 +225,7 @@ const styles = StyleSheet.create({
 
         // alignItems: "center",
         // justifyContent:"center",
+        
     },
 
     containerCollapsable: {

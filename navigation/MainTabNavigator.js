@@ -26,6 +26,9 @@ HomeStack.navigationOptions = {
       }
     />
   ),
+  // header: navigation => ({
+  //   tintColor: '#ff0000',
+  // }),
 };
 
 //////////////////////////////////////////////////////////////////
@@ -76,4 +79,6 @@ export default createBottomTabNavigator({
   HomeStack,
   LinksStack,
   RecommendStack,
+}, {
+  //tabBarOptions: { activeTintColor: '#ff0000' }
 });
