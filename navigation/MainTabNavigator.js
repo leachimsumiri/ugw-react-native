@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import EventsScreen from '../screens/EventsScreen';
-import RecommendScreen from '../screens/RecommendScreen';
+//import RecommendScreen from '../screens/RecommendScreen';
 import MapScreen from '../screens/MapScreen';
 
 const HomeStack = createStackNavigator({
@@ -51,7 +51,7 @@ LinksStack.navigationOptions = {
 //////////////////////////////////////////////////////////////////
 
 const RecommendStack = createStackNavigator({
-  Recommendations: RecommendScreen,
+  Recommendations: MapScreen, //RecommendScreen,
 });
 
 RecommendStack.navigationOptions = {
