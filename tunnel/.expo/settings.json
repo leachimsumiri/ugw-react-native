@@ -5,7 +5,7 @@
   "minify": false,
   "urlRandomness": null,
 
-  //"hostType": "tunnel",
-  "urlType": "exp",
-  "strict": false,
+  // //"hostType": "tunnel",
+  // "urlType": "exp",
+  // "strict": false,
 }

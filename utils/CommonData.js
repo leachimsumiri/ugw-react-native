@@ -6,7 +6,7 @@ export default class CommonData { //extends React.Component {
     static myInst = null;
 
     lastPosition = null;
-    lastEvents = null;
+    //lastEvents = null;
 
     static getInst() {
         if (CommonData.myInst == null) {
@@ -60,12 +60,11 @@ export default class CommonData { //extends React.Component {
 
     responseToJson(responseJson) {
       
-      var date = new Date();
-      //var timeLimit = date.getTime()/1000 + (3600*24*10); // 10 Tage von jetzt
-      var timeLimit = new Date().setDate(date.getDate() + 14); // 14 Tage von jetzt
-
       var events = [];
-      
+      //var date = new Date();
+      //var timeLimit = date.getTime()/1000 + (3600*24*10); // 10 Tage von jetzt
+      var timeLimit = new Date().setDate(new Date().getDate() + 14); // 14 Tage von jetzt
+      //date.getDay();
       let PI180 = Math.PI/180;
 
       responseJson.map((item) => {
@@ -95,9 +94,13 @@ export default class CommonData { //extends React.Component {
             var ev = Object.assign({ _time: eventZeit, km, }, item); // <- das jeweils direkt returnen nicht optimal, wegen Mehrfach-Events (weiter unten)
             events.push(ev);
           }*/
+          // Einmalig 
+          var ev = Object.assign({ _time: eventZeit, km, }, item); // <- das jeweils direkt returnen nicht optimal, wegen Mehrfach-Events (weiter unten)
+          events.push(ev);
 
           // (Mehrmals) Wöchentlich
-          /*else*/ if (item.repeat <= 7) {
+          ///*else*/ if (item.repeat <= 7) {
+          if (item.repeat > 0) {
             //var first = zeit.getTime()/1000;  // Unix Sekunden des Events
             //var jetzt = date.getTime()/1000 - item.ende/*umbenennen zu "dauer"*/; // Unix Sekudnen jetzt gerade - Dauer vom Event
             //const zeitspanne = 7*24*3600;
@@ -106,8 +109,18 @@ export default class CommonData { //extends React.Component {
             // TODO: Wenn Beginn vom Event in der Zukunft liegt ... ansonsten 
             //var zeitspanne_seit_letztem_event = ((jetzt - first)%(7*24*3600));
             
+            // Von jetzt, bis Zeitlimit
+            var date = new Date();
+            date.setHours(eventZeit.getHours());
+            date.setMinutes(eventZeit.getMinutes());
+            for (; date <= timeLimit; date.setDate(date.getDate()+1)) {
+
+              if (item.repeat&(1<<(7-date.getDay())))
+                events.push(Object.assign({ _time: new Date(z)/*.toLocaleString()*/, km, }, item));
+            }
+
             // Schleife von nächstem Event bis Maximalzeit
-            const SIEBEN = 7; // 7 Tage (für REPEAT-Funktion)
+            /*const SIEBEN = 7; // 7 Tage (für REPEAT-Funktion)
             for (var tagoffset=0; tagoffset < item.repeat || item.repeat==0; tagoffset++) {
 
                 // Alle 7 Tage
@@ -119,20 +132,21 @@ export default class CommonData { //extends React.Component {
                   if (z < nowMinusEventLength) continue;
 
                   // Außerhalb 
-                  //if (z )
+                  //if (z)
 
-                  events.push(Object.assign({ _time: new Date(z)/*.toLocaleString()*/, km, }, item));
+                  events.push(Object.assign({ _time: new Date(z)/*.toLocaleString()* /, km, }, item));
                   
                   // Keine Wiederholung => Fertig
                   if (item.repeat == 0)
                     return;
                 }
-            }
+            }*/
           }
       })
       //.catch((err) => console.warn(err));
       //callbackFunktion(position, events);
-      this.lastEvents = events;
+      //this.lastEvents = events;
+
       return events;
     }
 }
