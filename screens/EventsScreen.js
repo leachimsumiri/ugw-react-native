@@ -99,10 +99,10 @@ export default class EventsScreen extends React.Component {
         
         <View style={styles.navHeader}>        
 
-          <DropdownChecklist />
+          {/* <DropdownChecklist /> */}
           {/* <Text style={styles.filterItem}>Filter</Text> */}
           {/* https://www.npmjs.com/package/react-native-multiple-select */}
-          <View style={{width:'50%', marginLeft:2}}>
+          {/* <View style={{width:'50%', marginLeft:2}}>
           <MultiSelect 
             hideTags
             items={items} 
@@ -110,7 +110,7 @@ export default class EventsScreen extends React.Component {
             uniqueKey="id"
             displayKey="name"
             selectText=" -nu- "
-            //ref={(component) => { /*this.multiSelect = component*/ }}
+            //ref={(component) => { /*this.multiSelect = component* / }}
             selectedItems={this.state.selectedTypes}
             ref={(component) => { this.multiSelect = component }}
             
@@ -132,7 +132,7 @@ export default class EventsScreen extends React.Component {
             submitButtonColor="#CCC"
             submitButtonText="Auswählen"
           />
-          </View>
+          </View> */}
         
           <View style={{flex:1}} />
 

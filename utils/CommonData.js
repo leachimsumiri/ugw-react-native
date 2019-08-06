@@ -39,7 +39,7 @@ export default class CommonData { //extends React.Component {
       //return new Promise(function(resolve, reject) {
         var lat = parseInt(position.coords.latitude  * 1000000);
         var lon = parseInt(position.coords.longitude * 1000000);
-        var reqStr = `http://37.221.194.244:8080/v1/api/schedule/gps/${lat}/${lon}`;
+        var reqStr = `http://pyr.at:8080/v1/api/schedule/gps/${lat}/${lon}`;
         //var reqStr = 'http://37.221.194.244:8080/v1/api/schedule/gps/aa'+lat.toString()+'/'+lon.toString();
         //var reqStr = 'http://37.221.194.244:8080/v1/api/schedule/gps/48157083/16382141';
         return fetchJsonOrThrow(reqStr) //'http://37.221.194.244:8080/v1/api/event/gps/48157083/16382141')
@@ -61,23 +61,20 @@ export default class CommonData { //extends React.Component {
     responseToJson(responseJson) {
       
       var events = [];
-      //var date = new Date();
+      //var date = new Date(); //date.getDay();
       //var timeLimit = date.getTime()/1000 + (3600*24*10); // 10 Tage von jetzt
-      var timeLimit = new Date().setDate(new Date().getDate() + 14); // 14 Tage von jetzt
-      //date.getDay();
+      var timeLimit = new Date().setDate(new Date().getDate() + 7); // 14 Tage von jetzt
       let PI180 = Math.PI/180;
 
       responseJson.map((item) => {
 
           var eventZeit = new Date(item.von);
-          //var eventZeit = new Date(Date.UTC( ...item.von.split("-") )); // Leider kein Unterschied
           eventZeit.setHours(item.zeit.substring(0,2), item.zeit.substring(3,5));
           //eventZeit.setMinutes(); //if (item.start.Valid) { // Ansonsten wird gerade "Mitternacht" übergeben, hm ...
           //eventZeit.setUTCHours(item.zeit.substring(0,2), item.zeit.substring(3,5)); // verdoppelter Zeitumstellungseffekt (2h zu spät)
           var dauer = item.dauer==0 ? 120 : item.dauer;
           let nowMinusEventLength = new Date(); nowMinusEventLength.setMinutes(nowMinusEventLength.getMinutes() - dauer);
-          //let z = new Date(eventZeit);
-
+          
           // TODO: Ev auch checken ob datebeg malformed / gültiges Datum ist --- (aber REST Server sollte schon "leer" oder "gültig" ausspucken, keine Mischung)
 
           // Distanz 
@@ -94,10 +91,10 @@ export default class CommonData { //extends React.Component {
             var ev = Object.assign({ _time: eventZeit, km, }, item); // <- das jeweils direkt returnen nicht optimal, wegen Mehrfach-Events (weiter unten)
             events.push(ev);
           }*/
-          // Einmalig 
-          var ev = Object.assign({ _time: eventZeit, km, }, item); // <- das jeweils direkt returnen nicht optimal, wegen Mehrfach-Events (weiter unten)
-          events.push(ev);
-
+          // Einmalig (und noch nicht vorbei -- zu weit in Zukunft wird hier nicht beachtet (-> timeLimit?)) 
+          if (item.repeat == 0 && eventZeit > nowMinusEventLength)
+              events.push(Object.assign({ _time: eventZeit, km, }, item)); // <- das jeweils direkt returnen nicht optimal, wegen Mehrfach-Events (weiter unten)
+          
           // (Mehrmals) Wöchentlich
           ///*else*/ if (item.repeat <= 7) {
           if (item.repeat > 0) {
@@ -109,14 +106,27 @@ export default class CommonData { //extends React.Component {
             // TODO: Wenn Beginn vom Event in der Zukunft liegt ... ansonsten 
             //var zeitspanne_seit_letztem_event = ((jetzt - first)%(7*24*3600));
             
-            // Von jetzt, bis Zeitlimit
+            // Von jetzt, bis Zeitlimit (oder "bis"-Wert des Events)
             var date = new Date();
             date.setHours(eventZeit.getHours());
             date.setMinutes(eventZeit.getMinutes());
+            date.setSeconds(0);
+            date.setMilliseconds(0); // für Vergleich mit "bis" u.a. relevant
+            
             for (; date <= timeLimit; date.setDate(date.getDate()+1)) {
 
-              if (item.repeat&(1<<(7-date.getDay())))
-                events.push(Object.assign({ _time: new Date(z)/*.toLocaleString()*/, km, }, item));
+              // Evtl schon ausgelaufen?
+              if (item.bis) {
+                var bis = new Date(item.bis);
+                bis.setHours(eventZeit.getHours());
+                bis.setMinutes(eventZeit.getMinutes());
+                if (date > bis)
+                  break;
+              }
+
+              // An diesem Tag (und noch nicht vorbei)
+              if (item.repeat&(1<<(7-date.getDay())) && date > nowMinusEventLength)
+                 events.push(Object.assign({ _time: new Date(date)/*.toLocaleString()*/, km, }, item));
             }
 
             // Schleife von nächstem Event bis Maximalzeit
