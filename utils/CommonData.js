@@ -61,6 +61,7 @@ export default class CommonData { //extends React.Component {
     responseToJson(responseJson) {
       
       var events = [];
+      //var cancel = [];
       //var date = new Date(); //date.getDay();
       //var timeLimit = date.getTime()/1000 + (3600*24*10); // 10 Tage von jetzt
       var timeLimit = new Date().setDate(new Date().getDate() + 7); // 14 Tage von jetzt
@@ -68,7 +69,7 @@ export default class CommonData { //extends React.Component {
 
       responseJson.map((item) => {
 
-          var eventZeit = new Date(item.von);
+          var eventZeit = new Date(item.von); // (wenn mit Datum initialisiert automatisch Zeit 00:00:00)
           eventZeit.setHours(item.zeit.substring(0,2), item.zeit.substring(3,5));
           //eventZeit.setMinutes(); //if (item.start.Valid) { // Ansonsten wird gerade "Mitternacht" übergeben, hm ...
           //eventZeit.setUTCHours(item.zeit.substring(0,2), item.zeit.substring(3,5)); // verdoppelter Zeitumstellungseffekt (2h zu spät)
@@ -76,6 +77,10 @@ export default class CommonData { //extends React.Component {
           let nowMinusEventLength = new Date(); nowMinusEventLength.setMinutes(nowMinusEventLength.getMinutes() - dauer);
           
           // TODO: Ev auch checken ob datebeg malformed / gültiges Datum ist --- (aber REST Server sollte schon "leer" oder "gültig" ausspucken, keine Mischung)
+
+          // cancel.push(item);
+          // if (item.locId == 0)
+          //     return; // <- überprüfen ob dass so passt ohne Rückgabe usw.
 
           // Distanz 
           let a = 0.5 
@@ -92,7 +97,7 @@ export default class CommonData { //extends React.Component {
             events.push(ev);
           }*/
           // Einmalig (und noch nicht vorbei -- zu weit in Zukunft wird hier nicht beachtet (-> timeLimit?)) 
-          if (item.repeat == 0 && eventZeit > nowMinusEventLength)
+          if (item.repeat == 0 && eventZeit > nowMinusEventLength && eventZeit < timeLimit)
               events.push(Object.assign({ _time: eventZeit, km, }, item)); // <- das jeweils direkt returnen nicht optimal, wegen Mehrfach-Events (weiter unten)
           
           // (Mehrmals) Wöchentlich
@@ -106,7 +111,7 @@ export default class CommonData { //extends React.Component {
             // TODO: Wenn Beginn vom Event in der Zukunft liegt ... ansonsten 
             //var zeitspanne_seit_letztem_event = ((jetzt - first)%(7*24*3600));
             
-            // Von jetzt, bis Zeitlimit (oder "bis"-Wert des Events)
+            // Heute mit Eventzeit
             var date = new Date();
             date.setHours(eventZeit.getHours());
             date.setMinutes(eventZeit.getMinutes());
@@ -115,43 +120,30 @@ export default class CommonData { //extends React.Component {
             
             for (; date <= timeLimit; date.setDate(date.getDate()+1)) {
 
+              // Evtl NOCH nicht gültig?
+              if (date < eventZeit) // zB Eventvortag um selbe Zeit
+                continue;
+
               // Evtl schon ausgelaufen?
               if (item.bis) {
                 var bis = new Date(item.bis);
                 bis.setHours(eventZeit.getHours());
                 bis.setMinutes(eventZeit.getMinutes());
-                if (date > bis)
+                if (date > bis) // zB nächster Tag um die selbe Zeit
                   break;
               }
 
               // An diesem Tag (und noch nicht vorbei)
-              if (item.repeat&(1<<(7-date.getDay())) && date > nowMinusEventLength)
-                 events.push(Object.assign({ _time: new Date(date)/*.toLocaleString()*/, km, }, item));
+              if (item.repeat&( 1<<((7-date.getDay())%7) ) && date > nowMinusEventLength) // Mo=64 Di=32 ... So=1
+              //if (item.repeat&( 1<<date.getDay() ) && date > nowMinusEventLength) // So=1 Mo=2 Di=4 ... Fr=32 Sa=64
+              //if (item.locId) // bei locId == 0 -> Event findet ("heute") nicht statt!
+                  events.push(Object.assign({ _time: new Date(date)/*.toLocaleString()*/, km, }, item));
             }
-
-            // Schleife von nächstem Event bis Maximalzeit
-            /*const SIEBEN = 7; // 7 Tage (für REPEAT-Funktion)
-            for (var tagoffset=0; tagoffset < item.repeat || item.repeat==0; tagoffset++) {
-
-                // Alle 7 Tage
-                let z = new Date(eventZeit);
-                for (z.setDate(z.getDate() + tagoffset); z <= timeLimit; z.setDate(z.getDate() + SIEBEN)) { 
-                  //if (i > 1) {console.warn(item.name);}
-
-                  // Schon vorbei?
-                  if (z < nowMinusEventLength) continue;
-
-                  // Außerhalb 
-                  //if (z)
-
-                  events.push(Object.assign({ _time: new Date(z)/*.toLocaleString()* /, km, }, item));
-                  
-                  // Keine Wiederholung => Fertig
-                  if (item.repeat == 0)
-                    return;
-                }
-            }*/
           }
+
+          // // Abgearbeitet Items, "canceln zukünftige" (im selben Zeitbereich)
+          // if (item.cancel)
+          //   cancel.push(item);
       })
       //.catch((err) => console.warn(err));
       //callbackFunktion(position, events);

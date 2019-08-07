@@ -92,7 +92,7 @@ export default class EventListItem extends React.Component {
 
         let time = format(
             event._time, 
-            event._time.getDate()==new Date().getDate() ? 'HH:mm' : 'dd D.M. HH:mm',
+            event._time.getDate()==new Date().getDate() ? '\\H\\e\\u\\t\\e HH:mm' : 'dd D.M. HH:mm',
             {locale: deLocale,}); //, { locale: de }); //'MMMM Do, YYYY H:mma'
             //{ locale: locales[window.__localeId__] } // or global.__localeId__
             //var locales = {
