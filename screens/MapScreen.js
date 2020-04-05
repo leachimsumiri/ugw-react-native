@@ -8,7 +8,7 @@ import CommonData from '../utils/CommonData';
 
 export default class MapScreen extends BaseScreen { // React.Component {
 
-  static navigationOptions = { header: null, };
+  static navigationOptions = { headerShown: false, };
 
   constructor(props) {
     super(props);
