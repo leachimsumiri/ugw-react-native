@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { MapView } from 'expo'; // "react-native-maps"; ==> https://github.com/react-native-community/react-native-maps/blob/master/docs/installation.md
+import MapView from 'react-native-maps';
 
 const UsersMap = props => {
     //let userPositionMarker = null;
@@ -11,7 +11,7 @@ const UsersMap = props => {
         : props.eventLocations.map(eloc => <MapView.Marker coordinate={eloc} key={eloc.key} />);
 
     return (
-    <View style={{flex:1,}}>
+    <View style={{flex:1}}>
         <MapView style={styles.map}
             initialRegion={{
                 latitude: 48.208612,

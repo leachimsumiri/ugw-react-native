@@ -55,7 +55,7 @@ export default class MapScreen extends BaseScreen { // React.Component {
   render() {
     return (
       <View style={styles.container}>
-      <UsersMap style={{flex:1,}}
+      <UsersMap style={{flex:1}}
         userLocation={this.state.userLocation} 
         eventLocations={this.state.eventLocations}
         onRegionChange={this._handleRegionCange}

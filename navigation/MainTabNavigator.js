@@ -1,6 +1,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import TabBarIcon from '../components/TabBarIcon';
 import EventsScreen from '../screens/EventsScreen';
@@ -49,9 +50,9 @@ LinksStack.navigationOptions = {
 };
 
 //////////////////////////////////////////////////////////////////
-
+/*
 const RecommendStack = createStackNavigator({
-  Recommendations: MapScreen, //RecommendScreen,
+  Recommendations: RecommendScreen,
 });
 
 RecommendStack.navigationOptions = {
@@ -63,7 +64,7 @@ RecommendStack.navigationOptions = {
     />
   ),
 };
-
+*/
 
 // SettingsStack.navigationOptions = {
 //   tabBarLabel: 'Settings',
@@ -78,7 +79,7 @@ RecommendStack.navigationOptions = {
 export default createBottomTabNavigator({
   HomeStack,
   LinksStack,
-  RecommendStack,
+  //RecommendStack,
 }, {
   //tabBarOptions: { activeTintColor: '#ff0000' }
 });
